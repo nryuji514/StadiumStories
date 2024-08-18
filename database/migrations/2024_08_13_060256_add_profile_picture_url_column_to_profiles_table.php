@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('category_name', 50)->nullable();
-            $table->timestamps();
+        Schema::table('profiles', function (Blueprint $table) {
+            $table->string('profile_picture_url')->nullable();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('profiles', function (Blueprint $table) {
+            //
+        });
     }
 };
