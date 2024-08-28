@@ -24,9 +24,9 @@
                 <textarea name="post[body]" placeholder="今日も一日お疲れさまでした。">{{ $post->body }}</textarea>
                 <p class="body__error" style="color:red">{{ $errors->first('post.body')}}</p>
             </div>
-            <div>
-                <label for="images">Images:</label>
-                <input type="file" name="images[]" id="images" multiple>
+            <div class="post_image">
+                <h2>Post Image</h2>
+                <input type="file" name="post_image">
             </div>
             <input type="submit" value="update">
         </form>

@@ -19,7 +19,7 @@ class Post extends Model
         ];
 
     // カスタムメソッド: ページネーション
-    public function getPaginateByLimit(int $limit_count = 5)
+    public function getPaginateByLimit(int $limit_count = 6)
     {
         return $this::with('category')->orderBy('updated_at', 'DESC')->paginate($limit_count);
     }
@@ -43,7 +43,7 @@ class Post extends Model
     }
 
     // リレーション: Post has many Comments
-    public function comment()
+    public function comments()
     {
         return $this->hasMany(Comment::class);
     }

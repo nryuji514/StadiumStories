@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Profile extends Model
 {
     use HasFactory;
+    
+    protected $fillable = ['profile_picture_url','bio'];
 
     // リレーション: Profile belongs to User
     public function user()
