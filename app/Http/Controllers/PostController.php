@@ -6,41 +6,24 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\Category;
-use App\Models\PostImage;
 
 
 class PostController extends Controller
 {
     public function index(Post $post)
     {
-        //クライアントインスタンスの生成
-        $client = new \GuzzleHttp\Client();
-        
-        //GET受信するURL
-        $url = 'https://teratail.com/api/v1/questions';
-        
-        //リクエスト送信と返却データの取得
-        //Bearerトークンにアクセストークンを指定して認証を行う
-        $response = $client->request(
-            'GET',
-            $url,
-            ['Bearer' => config('services.teratail.token')]
-        );
-        
-        //API通信で取得したデータはjson形式なのでPHPファイルに対応した連想配列にでコードする
-        $questions = json_decode($response->getBody(), true);
-        
         //index.bladeに取得したデータを渡す
         return view('posts.index')->with([
-            'posts'=> $post->getPaginateByLimit(),
-            'questions' => $questions['questions'],
+            'posts'=> $post->getPaginateByLimit()
             ]);
         //blade内で使う変数'posts'と設定。'posts'の中身にgetを使い、インスタンス化した$postを代入。
     }
 
     public function show(Post $post)
     {
-        return view('posts.show')->with(['post'=>$post]);
+        $post->load('images', 'comments.user'); // 画像とコメントのリレーションをロード
+        return view('posts.show', ['post' => $post]);
+        
     }
     
    public function create(Category $category)
@@ -50,34 +33,20 @@ class PostController extends Controller
     
     public function store(PostRequest $request, Post $post)
     {
-        // 投稿内容の取得
         $input = $request->input('post');
-        
-        // ログインしているユーザーのIDを追加
-        $input['user_id'] = auth()->id(); // 現在のユーザーIDを取得し、user_id フィールドに設定
-        $input['category_id'] = $request->input('category_id'); // カテゴリーIDをセット
-        
-        // データをデバッグ
-        dd($input);
-
-        // 投稿の作成
-        $post = Post::create($input); // createメソッドを使用して、$fillable プロパティに指定されたすべての属性を一度に設定します
-
-        // 画像がアップロードされたか確認
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                // 画像を保存し、パスを取得
-                $path = $image->store('images', 'public');
-
-                // 画像情報を保存
-                PostImage::create([
-                    'post_id' => $post->id,
-                    'image_path' => $path,
-                ]);
-            }
+        $post->fill($input)->save();
+    
+        // 投稿と同時に画像を保存できるようにする
+        if ($request->hasFile('post_image')) {
+            foreach ($request->file('post_image') as $file) {
+            $imagePath = $file->store('uploads', 'public');
+            $post->images()->create(['image_path' => $imagePath]);
         }
+        }
+
         return redirect('/posts/' . $post->id);
     }
+
     
     public function edit(Post $post)
     {
@@ -86,23 +55,25 @@ class PostController extends Controller
     
     public function update(PostRequest $request, Post $post)
     {
-        $input_post = $request['post'];
-        $post->fill($input_post)->save();
-        
-        // 画像がアップロードされたか確認
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                // 画像を保存し、パスを取得
-                $path = $image->store('images', 'public');
-
-                // 画像情報を保存
-                PostImage::create([
-                    'post_id' => $post->id,
-                    'image_path' => $path,
-                ]);
+         $input_post = $request->input('post');
+    
+        // 画像がアップロードされた場合の処理
+        if ($request->hasFile('post_image')) {
+            // 古い画像がある場合は削除
+            if ($post->images()->exists()) {
+                Storage::delete('public/' . $post->images->first()->image_path);
+             $post->images()->delete();
             }
-        }
         
+            // 新しい画像の保存
+            $image = $request->file('post_image');
+            $path = $image->store('uploads', 'public');
+        
+            // 画像のパスを保存
+            $post->images()->create(['image_path' => $path]);
+        }
+    
+        $post->fill($input_post)->save();
     
         return redirect('/posts/' . $post->id);
     }

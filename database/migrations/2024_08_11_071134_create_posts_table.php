@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             
             $table->bigInteger('user_id')->unsigned()->index();
-            $table->bigInteger('category_id')->unsigned()->index();
+            $table->bigInteger('category_id')->unsigned()->index();$table->string('image_path')->nullable(); // 画像のパスを保存するカラム
             
             $table->string('title', 50)->nullable();
             $table->string('body', 200)->nullable();
