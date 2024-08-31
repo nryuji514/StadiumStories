@@ -139,9 +139,24 @@
                 </div>
             </div>
         </div>
-        <div class="edit">
-            <a href="/posts/{{ $post->id }}/edit">Edit</a>
+        <div class="likes">
+            <form action="{{ route('posts.like', $post) }}" method="POST">
+                @csrf
+                <button type="submit">{{ $post->likes->count() }} Likes</button>
+            </form>
+
+            @if($post->likes()->where('user_id', auth()->id())->exists())
+                <form action="{{ route('posts.unlike', $post) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                <button type="submit">Unlike</button>
+                </form>
+            @endif
         </div>
+
+        <!--<div class="edit">-->
+        <!--    <a href="/posts/{{ $post->id }}/edit">Edit</a>-->
+        <!--</div>-->
         <!-- コメントの表示 -->
         <div class="comments">
             <h2>Comments</h2>
@@ -150,7 +165,7 @@
             @else
                 @foreach($post->comments as $comment)
                     <div class="comment">
-                        <p><strong>{{ $comment->user->name }}</strong></p>
+                        <p><strong>{{ $post->nickname }}</strong></p>
                         <p>{{ $comment->comment }}</p>
                         <p><small>Posted at {{ $comment->created_at->format('Y-m-d H:i') }}</small></p>
                         @can('delete', $comment)

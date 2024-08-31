@@ -47,4 +47,15 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+    
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+    // User モデル経由で Profile モデルにアクセスし、nickname を取得
+    public function getNicknameAttribute()
+    {
+        return $this->user->profile->nickname ?? 'Default Nickname';
+    }
+
 }

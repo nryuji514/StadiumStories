@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\Like;
+use App\Models\User;
+use App\Models\Profile;
 
 
 class PostController extends Controller
@@ -16,7 +19,10 @@ class PostController extends Controller
         return view('posts.index')->with([
             'posts'=> $post->getPaginateByLimit()
             ]);
-        //blade内で使う変数'posts'と設定。'posts'の中身にgetを使い、インスタンス化した$postを代入。
+        // 投稿を取得し、ビューに渡す
+        $posts = Post::with('user.profile')->get();
+        return view('posts.index', compact('posts'));
+
     }
 
     public function show(Post $post)
@@ -34,14 +40,19 @@ class PostController extends Controller
     public function store(PostRequest $request, Post $post)
     {
         $input = $request->input('post');
-        $post->fill($input)->save();
+        $input['user_id'] = auth()->id();
+        
+        // 新しい投稿を作成
+        $post = new Post();
+        $post->fill($input);
+        $post->save();
     
         // 投稿と同時に画像を保存できるようにする
         if ($request->hasFile('post_image')) {
             foreach ($request->file('post_image') as $file) {
             $imagePath = $file->store('uploads', 'public');
             $post->images()->create(['image_path' => $imagePath]);
-        }
+            }
         }
 
         return redirect('/posts/' . $post->id);
@@ -83,6 +94,30 @@ class PostController extends Controller
         $post->delete();
         return redirect('/');
     }
+    
+    public function like(Post $post)
+    {
+        $like = Like::firstOrCreate(
+            ['user_id' => auth()->id(), 'post_id' => $post->id]
+        );
+
+        return back();
+    }
+
+    public function unlike(Post $post)
+    {
+        $like = Like::where('user_id', auth()->id())
+                    ->where('post_id', $post->id)
+                    ->first();
+
+        if ($like) {
+            $like->delete();
+        }
+
+        return back();
+    }
+    
+
     
     
 }
