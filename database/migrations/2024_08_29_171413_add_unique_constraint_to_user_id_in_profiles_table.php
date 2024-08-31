@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profiles', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->unique()->after('id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // user_id に一意制約を追加
+            $table->unique('user_id');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('profiles', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
+            // user_id の一意制約を削除
+            $table->dropUnique(['user_id']);
         });
     }
 };

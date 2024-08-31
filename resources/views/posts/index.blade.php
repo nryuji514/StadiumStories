@@ -47,6 +47,18 @@
             color: #333;
             margin: 0;
         }
+        .post-details {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .post-details .user-name {
+            font-weight: bold;
+        }
+        .post-details .post-time {
+            margin-left: 10px;
+            color: #999;
+        }
         .category {
             color: #999;
             font-size: 0.9em;
@@ -81,6 +93,54 @@
             margin-top: 10px;
             font-size: 1.2em;
         }
+        .likes {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .like-button, .unlike-button {
+            background-color: transparent;
+            border: none;
+            color: #ff5252;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        .like-button.liked, .unlike-button {
+            color: #e0245e;
+        }
+        .like-button .fa-heart {
+            margin-right: 5px;
+        }
+        .like-button.liked .fa-heart {
+            color: #e0245e;
+            animation: pop 0.3s ease;
+        }
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .post-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .profile-picture {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .author-name {
+        font-weight: bold;
+    }
+
     </style>
 </head>
 <x-app-layout>
@@ -93,16 +153,42 @@
         <div class='posts'>
             @foreach($posts as $post)
             <div class='post'>
-                <a href="/posts/{{ $post->id }}">
-                    <h2 class="title">{{ $post->title }}</h2>
-                </a>
-                @foreach($post->images as $image)
-                    <img src="{{ asset('storage/' . $image->image_path) }}" alt="Post Image" style="max-width:100%;">
-                @endforeach
-                <div class="category">
-                    <a href="/categories/{{ $post->category->id }}">{{ $post->category->name }}</a>
+                <div class="post-author">
+                    <a href="{{ route('profiles.show', $post->user->id) }}" class="post-author-link">
+                        @if ($post->user && $post->user->profile && $post->user->profile->profile_picture_url)
+                            <img src="{{ asset('storage/' . $post->user->profile->profile_picture_url) }}" alt="Profile Picture" class="profile-picture">
+                        @else
+                            <img src="default-profile-picture.jpg" alt="Default Profile Picture" class="profile-picture">
+                        @endif
+                    </a>
+                    <span class="author-name"><strong>投稿者:</strong>{{ $post->nickname }}</span>
+                    <span class="post-time">・・{{ $post->created_at->format('Y-m-d H:i') }}</span>
                 </div>
-                <p class='body'>{{ $post->body }}</p>
+                <a href="{{ route('show', $post->id) }}" class="post-link">
+                    <h2 class="post-title">{{ $post->title }}</h2>
+                    @foreach($post->images as $image)
+                     <img src="{{ asset('storage/' . $image->image_path) }}" alt="Post Image" style="max-width:100%;">
+                    @endforeach
+                    <div class="category">
+                        <a href="/categories/{{ $post->category->id }}">{{ $post->category->name }}</a>
+                    </div>
+                    <p class='body'>{{ $post->body }}</p>
+                </a>
+                <div class="likes">
+                    <form action="{{ route('posts.like', $post) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="like-button {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}">
+                            <i class="fa fa-heart"></i> {{ $post->likes->count() }} Likes
+                        </button>
+                    </form>
+                    @if($post->likes()->where('user_id', auth()->id())->exists())
+                        <form action="{{ route('posts.unlike', $post) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="unlike-button">Unlike</button>
+                        </form>
+                    @endif
+                </div>
                 <div class="button-group">
                     <form action="/posts/{{ $post->id }}" id="form_{{ $post->id }}" method="post" enctype="multipart/form-data">
                         @csrf
