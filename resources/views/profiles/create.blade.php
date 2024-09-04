@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_','-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -68,8 +68,8 @@
                 <textarea id="bio" name="bio">{{ old('bio') }}</textarea>
             </div>
             <div class="form-group">
-                <label for="profile_picture_url">Profile Picture URL</label>
-                <input type="file" id="profile_picture_url" name="profile_picture_url" value="{{ old('profile_picture_url', $profile->profile_picture_url ?? '') }}">
+                <label for="profile_picture_url">Profile Picture</label>
+                <input type="file" id="profile_picture_url" name="profile_picture_url">
             </div>
             <div class="form-group">
                 <button type="submit">Save Profile</button>

@@ -16,7 +16,10 @@
                         {{ __('Dashboard') }}
                     </x-app-link>
                     <x-nav-link :href="route('index')" :active="request()->routeIs('index')">
-                        {{ __('Index') }}
+                        {{ __('Post') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('maps.show')" :active="request()->routeIs('maps.show')">
+                        {{ __('Map') }}
                     </x-nav-link>
                     
                 </div>
@@ -38,7 +41,8 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profiles.show')">
+                        {{--<x-dropdown-link :href="route('profiles.show')">--}}
+                        <x-dropdown-link href="/profiles/{{ Auth::id() }}">
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
@@ -77,7 +81,9 @@
             <x-nav-link :href="route('index')" :active="request()->routeIs('index')">
                 {{ __('Index') }}
             </x-nav-link>
-            
+            <x-nav-link :href="route('maps.show')" :active="request()->routeIs('maps.show')">
+                {{ __('Map') }}
+            </x-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -88,7 +94,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profiles.show')">
+                <x-responsive-nav-link href="/profiles/{{ Auth::id() }}">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
