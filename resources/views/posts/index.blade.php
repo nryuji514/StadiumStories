@@ -154,7 +154,7 @@
             @foreach($posts as $post)
             <div class='post'>
                 <div class="post-author">
-                    <a href="{{ route('profiles.show', $post->user->id) }}" class="post-author-link">
+                    <a href="{{ route('profiles.show', $post->id) }}" class="post-author-link">
                         @if ($post->user && $post->user->profile && $post->user->profile->profile_picture_url)
                             <img src="{{ asset('storage/' . $post->user->profile->profile_picture_url) }}" alt="Profile Picture" class="profile-picture">
                         @else

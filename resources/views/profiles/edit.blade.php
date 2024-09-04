@@ -63,13 +63,13 @@
             <p class="success">{{ session('success') }}</p>
         @endif
 
-        <form action="{{ route('profiles.update',['profile' => $profile->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('profiles.update', ['profile' => $profile->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="nickname">ニックネーム</label>
-                <input type="text" id="nickname" name="nickname" value="{{ old('nickname', $profile->first_name) }}">
+                <input type="text" id="nickname" name="nickname" value="{{ old('nickname', $profile->nickname) }}">
                 @error('nickname')
                     <p class="error">{{ $message }}</p>
                 @enderror
@@ -77,7 +77,7 @@
 
             <div class="form-group">
                 <label for="bio">自己紹介</label>
-                <textarea id="bio" name="bio">{{ old('bio', $profile->bio ?? '') }}</textarea>
+                <textarea id="bio" name="bio">{{ old('bio', $profile->bio) }}</textarea>
                 @error('bio')
                     <p class="error">{{ $message }}</p>
                 @enderror
