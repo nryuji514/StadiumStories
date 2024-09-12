@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('category_name', 50);
-            $table->timestamps();
+        Schema::table('stations', function (Blueprint $table) {
+            $table->decimal('latitude', 10, 7)->after('category_id');
+            $table->decimal('longitude', 10, 7)->after('latitude');
         });
     }
 
@@ -23,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('stations', function (Blueprint $table) {
+            $table->dropColumn(['latitude', 'longitude']);
+        });
     }
 };
