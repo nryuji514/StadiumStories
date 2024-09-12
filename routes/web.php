@@ -6,6 +6,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\RouteController;
+use App\Http\Controllers\StadiumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,5 +59,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
     Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
 });
+
+Route::resource('stadiums', StadiumController::class);
+
+Route::get('/stadiums', [StadiumController::class, 'index'])->name('stadiums.index');
+Route::get('/stadiums/create', [StadiumController::class, 'create'])->name('stadiums.create');
+Route::post('/stadiums', [StadiumController::class, 'store'])->name('stadiums.store');
+Route::get('/stadiums/{stadium}', [StadiumController::class, 'show'])->name('stadiums.show');
+Route::get('/stadiums/{stadium}/edit', [StadiumController::class, 'edit'])->name('stadiums.edit');
+Route::put('/stadiums/{stadium}', [StadiumController::class, 'update'])->name('stadiums.update');
+Route::delete('/stadiums/{stadium}', [StadiumController::class, 'destroy'])->name('stadiums.destroy');
+
+Route::get('/routes', [RouteController::class, 'index'])->name('routes.index');
+Route::get('/routes/create', [RouteController::class, 'create'])->name('routes.create');
+Route::post('/routes', [RouteController::class, 'store'])->name('routes.store');
+Route::get('/routes/{route}', [RouteController::class, 'show'])->name('routes.show');
+Route::get('/routes/{route}/edit', [RouteController::class, 'edit'])->name('routes.edit');
+Route::put('/routes/{route}', [RouteController::class, 'update'])->name('routes.update');
+Route::delete('/routes/{route}', [RouteController::class, 'destroy'])->name('routes.destroy');
 
 require __DIR__.'/auth.php';
