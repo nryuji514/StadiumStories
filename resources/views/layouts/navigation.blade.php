@@ -15,8 +15,8 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
-                    </x-app-link>
-                    <x-nav-link :href="route('index')" :active="request()->routeIs('index')">
+                    </x-nav-link>
+                    <x-nav-link :href="route('stores.posts.index', ['store' => $store->id])" :active="request()->routeIs('stores.posts.index')">
                         {{ __('Post') }}
                     </x-nav-link>
                     <x-nav-link :href="route('maps.show')" :active="request()->routeIs('maps.show')">
@@ -81,8 +81,8 @@
             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-nav-link>
-            <x-nav-link :href="route('index')" :active="request()->routeIs('index')">
-                {{ __('Index') }}
+            <x-nav-link :href="route('stores.posts.index', ['store' => $store->id])" :active="request()->routeIs('stores.posts.index')">
+                {{ __('Post') }}
             </x-nav-link>
             <x-nav-link :href="route('maps.show')" :active="request()->routeIs('maps.show')">
                 {{ __('Map') }}

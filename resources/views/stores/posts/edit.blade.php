@@ -30,8 +30,6 @@
             </div>
             <input type="submit" value="update">
         </form>
-        <div class="footer">
-            <a href="/posts/ {{ $post->id }}">戻る</a>
-        </div>
+        <a href="{{ route('stores.posts.create', ['store' => $store->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">投稿一覧へ</a>
     </x-app-layout>
 </html>

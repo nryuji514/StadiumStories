@@ -9,42 +9,32 @@ use App\Models\Category;
 use App\Models\Like;
 use App\Models\User;
 use App\Models\Profile;
+use App\Models\Store;
 
 
 class PostController extends Controller
 {
-    public function index(Post $post)
-    {
-        //index.bladeに取得したデータを渡す
-        return view('posts.index')->with([
-            'posts'=> $post->getPaginateByLimit()
-            ]);
-        // 投稿を取得し、ビューに渡す
-        $posts = Post::with('user.profile')->get();
-        return view('posts.index', compact('posts'));
-
-    }
-
-    public function show(Post $post)
+    public function show(Store $store, Post $post )
     {
         $post->load('images', 'comments.user'); // 画像とコメントのリレーションをロード
-        return view('posts.show', ['post' => $post]);
-        
+        return view('stores.posts.show', ['store' => $store, 'post' => $post]);
     }
     
-   public function create(Category $category)
+   public function create(Store $store)
     {
-        return view('posts.create')->with(['categories' => $category->get()]);
+        return view('stores.posts.create', compact('store'));
     }
     
-    public function store(PostRequest $request, Post $post)
+    public function store(Request $request,Store $store)
     {
-        $input = $request->input('post');
-        $input['user_id'] = auth()->id();
         
         // 新しい投稿を作成
         $post = new Post();
-        $post->fill($input);
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->store_id = $store->id;
+        $post->user_id = auth()->id();
+    
         $post->save();
     
         // 投稿と同時に画像を保存できるようにする
@@ -54,9 +44,8 @@ class PostController extends Controller
             $post->images()->create(['image_path' => $imagePath]);
             }
         }
-
-        return redirect('/posts/' . $post->id);
-    }
+        return redirect()->route('stores.posts.index', ['store' => $store->id]);
+    }   
 
     
     public function edit(Post $post)
@@ -85,7 +74,6 @@ class PostController extends Controller
         }
     
         $post->fill($input_post)->save();
-    
         return redirect('/posts/' . $post->id);
     }
     
@@ -113,7 +101,6 @@ class PostController extends Controller
         if ($like) {
             $like->delete();
         }
-
         return back();
     }
 }

@@ -32,4 +32,9 @@ class Comment extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+
 }

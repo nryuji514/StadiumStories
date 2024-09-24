@@ -130,7 +130,6 @@
         <div class="content">
             <div class="content__post">
                 <h3>本文</h3>
-                <a class="category-link" href="/categories/{{ $post->category->id }}">{{ $post->category->name }}</a>
                 <p class="body">{{ $post->body }}</p>
                 <div class="images">
                     @foreach($post->images as $image)
@@ -181,15 +180,13 @@
         </div>
         <!-- コメントの投稿フォーム -->
         @auth
-            <form action="{{ route('comments.store', ['post' => $post->id]) }}" method="POST">
+            <form action="{{ route('stores.posts.comments.store', ['store' => $store->id ,'post' => $post->id]) }}" method="POST">
                 @csrf
                 <textarea name="comment" placeholder="コメントを入力..."></textarea>
                 <input type="submit" value="コメントを投稿">
             </form>
         @endauth
-        <div class="footer">
-            <a href="/">戻る</a>
-        </div>
+        <a href="{{ route('stores.posts.index', ['store' => $store->id]) }}">投稿一覧へ</a>
     </div>
 </body>
 </html>

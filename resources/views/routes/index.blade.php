@@ -103,7 +103,7 @@
                     @forelse ($stadium->routes as $route)
                         <li class="route-item">
                             <a href="{{ route('routes.show', $route->id) }}">
-                                {{ $route->station_name }} から {{ $stadium->name }} まで
+                                {{ $route->station_name }} から {{ $route->stadium->name }} まで
                             </a>
                             <a href="{{ route('routes.edit', $route->id) }}" class="btn btn-sm btn-warning">編集</a>
                             <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline;">

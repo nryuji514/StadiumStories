@@ -59,7 +59,7 @@
             <a href="{{ route('profiles.edit', $profile->id) }}">Edit Profile</a>
         </div>
         <div class="footer">
-            <a href="/">戻る</a>
+            <a href="{{ route('routes.index') }}">戻る</a>
         </div>
     </div>
 </x-app-layout>

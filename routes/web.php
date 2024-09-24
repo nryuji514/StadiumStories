@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\StadiumController;
+use App\Http\Controllers\StoreController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,15 +31,21 @@ Route::get('/dashboard', function () {
 
 Route::get('/maps', [MapController::class, 'show'])->name('maps.show');
 
+
+
 Route::controller(PostController::class)->middleware(['auth'])->group(function(){
-    Route::get('/', 'index')->name('index');
-    Route::post('/posts', 'store')->name('store');
-    Route::get('/posts/create', 'create')->name('create');
-    Route::get('/posts/{post}', 'show')->name('show');
+    Route::get('/stores/{store}/posts/create', 'create')->name('stores.posts.create');
+    Route::post('/stores/{store}/posts', 'store')->name('stores.posts.store');
+    Route::get('/stores/{store}/posts/{post}', 'show')->name('stores.posts.show');
     Route::put('/posts/{post}', 'update')->name('update');
     Route::delete('/posts/{post}', 'delete')->name('delete');
-    Route::get('/posts/{post}/edit', 'edit')->name('edit');
+    Route::delete('/stores/{store}/posts/{post}', 'destroy')->name('posts.destroy');
+    Route::get('stores/{store}/posts/{post}/edit', 'edit')->name('stores.posts.edit');
 });
+
+Route::get('/stores/{store}/posts', [StoreController::class, 'index'])->name('stores.posts.index');
+Route::post('routes/{route}/stores/search', [StoreController::class, 'searchAndSave'])->name('stores.searchAndSave');
+
 
 Route::get('/categories/{category}', [CategoryController::class,'index'])->middleware("auth");
 
@@ -51,16 +58,14 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('/stores/{store}/posts/{post}/comments', [CommentController::class, 'store'])->name('stores.posts.comments.store');
+    Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
     Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
 });
-
-Route::resource('stadiums', StadiumController::class);
 
 Route::get('/stadiums', [StadiumController::class, 'index'])->name('stadiums.index');
 Route::get('/stadiums/create', [StadiumController::class, 'create'])->name('stadiums.create');
