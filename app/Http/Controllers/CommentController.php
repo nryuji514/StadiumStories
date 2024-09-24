@@ -9,10 +9,11 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Store;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Post $post)
+    public function store(Request $request, Store $store, Post $post)
     {
     $request->validate([
         'comment' => 'required|max:1000',
@@ -21,10 +22,11 @@ class CommentController extends Controller
     $comment = new Comment();
     $comment->comment = $request->input('comment');
     $comment->post_id = $post->id;
+    $comment->store_id = $store->id;
     $comment->user_id = auth()->user()->id; // 現在のログインユーザーのIDを設定
     $comment->save();
 
-    return redirect()->route('show', $post->id);
+    return redirect()->route('stores.posts.show', ['store' => $store->id, 'post' => $post->id]);
     }
     public function destroy(Comment $comment)
     {
@@ -35,5 +37,5 @@ class CommentController extends Controller
 
         // リダイレクトまたはJSONレスポンス
         return redirect()->back()->with('success', 'Comment deleted successfully.');
-}
+    }
 }

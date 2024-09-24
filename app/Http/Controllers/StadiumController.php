@@ -53,11 +53,11 @@ class StadiumController extends Controller
         ]);
         
         $stadiumName = $request['name'];
-
+    
         
         // Google Maps Geocoding APIを使って球場名から緯度と経度を取得
         $coordinates = $this->getCoordinates($stadiumName);
-
+        
         // 取得したデータが有効か確認
         if (isset($coordinates)) {
             $stadium = new Stadium();
@@ -117,7 +117,7 @@ class StadiumController extends Controller
     }
     private function getCoordinates($stadiumName) 
     { 
-        $apiKey = env('GOOGLE_MAPS_API'); // 環境変数からAPIキーを取得
+        $apiKey = env('GOOGLE_MAPS_API_KEY'); // 環境変数からAPIキーを取得
         $client = new Client();
         $url = "https://maps.googleapis.com/maps/api/geocode/json";
         try {

@@ -27,4 +27,8 @@ class Route extends Model
     {
         return $this->belongsTo(Stadium::class);
     }
+    public function stores()
+    {
+        return $this->hasMany(Store::class);
+    }
 }

@@ -15,19 +15,13 @@ class Post extends Model
         'title',
         'body',
         'user_id',
-        'category_id'
+        'store_id'
         ];
 
     // カスタムメソッド: ページネーション
     public function getPaginateByLimit(int $limit_count = 6)
     {
-        return $this::with('category')->orderBy('updated_at', 'DESC')->paginate($limit_count);
-    }
-
-    // リレーション: Post belongs to Category
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+        return $this::orderBy('updated_at', 'DESC')->paginate($limit_count);
     }
 
     // リレーション: Post belongs to User
@@ -56,6 +50,14 @@ class Post extends Model
     public function getNicknameAttribute()
     {
         return $this->user->profile->nickname ?? 'Default Nickname';
+    }
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+    public function routes()
+    {
+        return $this->belongsToMany(Route::class);
     }
 
 }

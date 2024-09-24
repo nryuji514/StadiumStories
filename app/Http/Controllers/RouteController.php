@@ -25,8 +25,14 @@ class RouteController extends Controller
      */
     public function show($id)
     {
-        $route = Route::findOrFail($id);
+        $route = Route::find($id);
         $route = Route::with('stadium')->findOrFail($id);
+        $stores = $route->stores;
+        // 各店舗に紐づく投稿を表示
+        foreach ($stores as $store) {
+            $posts = $store->posts; // 各店舗に関連する投稿
+        }
+        
         return view('routes.show', compact('route'));
     }
 
@@ -130,7 +136,7 @@ class RouteController extends Controller
      */
     private function getCoordinates($address)
     {
-        $apiKey = env('GOOGLE_MAPS_API'); // 環境変数からAPIキーを取得
+        $apiKey = env('GOOGLE_MAPS_API_KEY'); // 環境変数からAPIキーを取得
         $client = new Client();
         $url = "https://maps.googleapis.com/maps/api/geocode/json";
         try {
