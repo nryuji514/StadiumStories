@@ -30,6 +30,6 @@
             </div>
             <input type="submit" value="update">
         </form>
-        <a href="{{ route('stores.posts.create', ['store' => $store->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">投稿一覧へ</a>
+        <a href="{{ route('stores.posts.create', ['store' => $data->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">投稿一覧へ</a>
     </x-app-layout>
 </html>

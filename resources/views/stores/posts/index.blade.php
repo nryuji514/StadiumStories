@@ -109,11 +109,10 @@
     </style>
 </head>
 <x-app-layout>
-    {{ dd($store); }}
     <header>
-        <h1>{{ $store->name }} の投稿一覧</h1>
+        <h1>{{ $data->name }} の投稿一覧</h1>
     </header>
-    <a href="{{ route('stores.posts.create', ['store' => $store->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">{{ $store->name }}に対して投稿を作成する</a>
+    <a href="{{ route('stores.posts.create', ['store' => $data->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">{{ $data->name }}に対して投稿を作成する</a>
     <div class="container">
         <div class='posts'>
             @foreach($posts as $post)
@@ -135,7 +134,7 @@
                                 <img src="{{ asset('storage/' . $image->image_path) }}" alt="Post Image">
                             </a>
                         @endforeach
-                        <a href="{{ route('stores.posts.show', ['store' => $store->id, 'post' => $post->id]) }}" class="post-title">{{ $post->title }}</a>
+                        <a href="{{ route('stores.posts.show', ['store' => $data->id, 'post' => $post->id]) }}" class="post-title">{{ $post->title }}</a>
                         <p>{{ $post->body }}</p>
                     </div>
                     <div class="likes">
@@ -154,7 +153,7 @@
                         @endif
                     </div>
                     <div class="button-group">
-                        <form action="{{ route('posts.destroy', ['post' => $post->id, 'store' => $store->id]) }}" method="post">
+                        <form action="{{ route('posts.destroy', ['post' => $post->id, 'store' => $data->id]) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>

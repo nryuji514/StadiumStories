@@ -15,9 +15,10 @@ class StoreController extends Controller
     {
         // 特定の店舗に関連する投稿を取得
         $posts = $store->posts()->with('images', 'user', 'likes','comments.user')->paginate(10);
-
+        $data = $store;
+        
         // ビューに店舗情報と投稿情報を渡す
-        return view('stores.posts.index', compact('store', 'posts'));
+        return view('stores.posts.index')->with(['posts'=>$posts, 'store'=>$store, 'data'=>$data]);
     }
 
     public function searchAndSave(Route $route)
