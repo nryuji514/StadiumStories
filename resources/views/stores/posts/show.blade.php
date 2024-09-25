@@ -180,13 +180,13 @@
         </div>
         <!-- コメントの投稿フォーム -->
         @auth
-            <form action="{{ route('stores.posts.comments.store', ['store' => $store->id ,'post' => $post->id]) }}" method="POST">
+            <form action="{{ route('stores.posts.comments.store', ['store' => $data->id ,'post' => $post->id]) }}" method="POST">
                 @csrf
                 <textarea name="comment" placeholder="コメントを入力..."></textarea>
                 <input type="submit" value="コメントを投稿">
             </form>
         @endauth
-        <a href="{{ route('stores.posts.index', ['store' => $store->id]) }}">投稿一覧へ</a>
+        <a href="{{ route('stores.posts.index', ['store' => $data->id]) }}">投稿一覧へ</a>
     </div>
 </body>
 </html>
