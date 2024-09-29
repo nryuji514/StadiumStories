@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>球場を追加</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrDUyDjo9b7wtk_8EM4wk9gnXc_WaSWUQ&libraries=places&callback=initMap" async defer></script>
+    
     <style>
         /* ここにスタイルが続きます */
         body {
@@ -135,6 +135,7 @@
 </head>
 <body>
 <x-app-layout>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrDUyDjo9b7wtk_8EM4wk9gnXc_WaSWUQ&libraries=places&callback=initMap" async defer></script>
     <div class="container">
         <nav>
             <a href="{{ route('routes.index') }}">＜ 戻る</a>
