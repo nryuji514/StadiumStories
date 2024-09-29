@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $store->name }} の投稿一覧</title>
-    <!-- Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-    <!-- Styles -->
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -15,7 +15,8 @@
             background-color: #f4f4f4;
         }
         header {
-            background-color: #333;
+            font-size: 1.2em;
+            background-color: #007bff;
             color: white;
             padding: 10px;
             text-align: center;
@@ -40,9 +41,11 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s ease-in-out;
             overflow: hidden;
+            padding: 10px;
         }
         .post:hover {
             transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         .post-author {
             display: flex;
@@ -64,14 +67,17 @@
             max-width: 100%;
             border-radius: 8px;
             margin-bottom: 10px;
-            cursor: pointer; /* 画像にカーソルを追加 */
+            cursor: pointer;
         }
         .post-title {
             font-weight: bold;
             font-size: 1.1em;
             margin-top: 10px;
-            cursor: pointer; /* タイトルにカーソルを追加 */
-            color: #007bff; /* タイトルの色 */
+            color: #007bff;
+            text-decoration: none;
+        }
+        .post-title:hover {
+            text-decoration: underline;
         }
         .likes {
             display: flex;
@@ -79,23 +85,33 @@
             justify-content: space-between;
             padding: 10px;
         }
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-        }
-        .button-group button {
-            background: #ff5252;
+
+        .like-button {
+            background: none;
             border: none;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 4px;
+            color: #007bff;
             cursor: pointer;
-            transition: background 0.3s ease;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
         }
-        .button-group button:hover {
-            background: #ff1744;
+
+        .like-button.liked {
+            color: red;
         }
+
+        .delete-button {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        .delete-button:hover {
+            color: darkred;
+    }
         .welcome-message {
             text-align: center;
             margin-top: 20px;
@@ -106,13 +122,43 @@
             text-align: center;
             margin-top: 20px;
         }
+        .like-button {
+            background: none;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+        .like-button.liked {
+            color: red;
+        }
+         /* 投稿作成リンクのスタイル */
+        .create-post-button {
+            display: block;
+            text-align: center;
+            font-weight: bold;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: background 0.3s;
+        }
+        .create-post-button:hover {
+            background-color: #218838; /* ダークグリーンに変更 */
+        }
     </style>
 </head>
 <x-app-layout>
     <header>
         <h1>{{ $data->name }} の投稿一覧</h1>
     </header>
-    <a href="{{ route('stores.posts.create', ['store' => $data->id]) }}" style="display: block; text-align: center; margin-top: 20px; font-weight: bold;">{{ $data->name }}に対して投稿を作成する</a>
+    <a href="{{ route('stores.posts.create', ['store' => $data->id]) }}" class="create-post-button">
+        {{ $data->name }}に対して投稿を作成する
+    </a>
     <div class="container">
         <div class='posts'>
             @foreach($posts as $post)
@@ -137,34 +183,26 @@
                         <a href="{{ route('stores.posts.show', ['store' => $data->id, 'post' => $post->id]) }}" class="post-title">{{ $post->title }}</a>
                         <p>{{ $post->body }}</p>
                     </div>
-                    <div class="likes">
-                        <form action="{{ route('posts.like', $post) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="like-button {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}">
-                                <i class="fa fa-heart"></i> {{ $post->likes->count() }} Likes
-                            </button>
-                        </form>
-                        @if($post->likes()->where('user_id', auth()->id())->exists())
-                            <form action="{{ route('posts.unlike', $post) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="unlike-button">Unlike</button>
-                            </form>
-                        @endif
-                    </div>
-                    <div class="button-group">
-                        <form action="{{ route('posts.destroy', ['post' => $post->id, 'store' => $data->id]) }}" method="post">
+                   <div class="likes">
+                        <!-- いいねボタン -->
+                        <button type="button" class="like-button {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}" data-post-id="{{ $post->id }}">
+                            <span class="heart {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}">♡</span>
+                            <span class="like-count">{{ $post->likes->count() }}</span> 
+                        </button>
+
+                        <!-- ゴミ箱ボタン -->
+                        <form action="{{ route('stores.posts.destroy', ['post' => $post->id, 'store' => $data->id]) }}" method="post" style="display: inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
+                            <button type="submit" onclick="return confirm('投稿を削除してもよろしいですか?')" class="delete-button">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </form>
                     </div>
-                </div>
             @endforeach
         </div>
 
         <div class='paginate'>{{ $posts->links() }}</div>
-
         
     </div>
 
@@ -175,6 +213,35 @@
                 document.querySelector(`#form_${id}`).submit();
             }
         }
-    </script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function () {
+                    const postId = this.dataset.postId;
+                    const isLiked = this.classList.contains('liked');
+                    const url = isLiked
+                        ? `/posts/${postId}/unlike`
+                        : `/posts/${postId}/like`;
+
+                    const method = isLiked ? 'DELETE' : 'POST';
+
+                    fetch(url, {
+                        method: method,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => response.json())
+                      .then(data => {
+                          if (data.success) {
+                              const likeCount = this.querySelector('.like-count');
+                              likeCount.textContent = data.likes_count;
+                              this.classList.toggle('liked');
+                          }
+                      })
+                      .catch(error => console.error('Error:',));
+                      });
+            });
+        });
+</script>
 </x-app-layout>
 </html>

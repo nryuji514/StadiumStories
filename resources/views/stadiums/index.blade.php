@@ -6,7 +6,7 @@
     <title>球場一覧</title>
 </head>
 
-<body>
+<x-app-layout>
     <div class="container">
         <h1>球場一覧</h1>
        
@@ -21,6 +21,5 @@
         <a href="{{ route('stadiums.create') }}" class="btn btn-success">新しい球場を追加</a>
         <a href="{{ route('routes.index') }}" class="btn btn-primary">経路一覧を見る</a>
     </div>
-</body>
+</x-app-layout>
 </html>
-

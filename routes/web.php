@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
@@ -21,17 +22,14 @@ use App\Http\Controllers\StoreController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+// デフォルトのルートをログイン画面にリダイレクト
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/maps', [MapController::class, 'show'])->name('maps.show');
-
-
 
 Route::controller(PostController::class)->middleware(['auth'])->group(function(){
     Route::get('/stores/{store}/posts/create', 'create')->name('stores.posts.create');
@@ -39,7 +37,7 @@ Route::controller(PostController::class)->middleware(['auth'])->group(function()
     Route::get('/stores/{store}/posts/{post}', 'show')->name('stores.posts.show');
     Route::put('/posts/{post}', 'update')->name('update');
     Route::delete('/posts/{post}', 'delete')->name('delete');
-    Route::delete('/stores/{store}/posts/{post}', 'destroy')->name('posts.destroy');
+    Route::delete('/stores/{store}/posts/{post}', 'destroy')->name('stores.posts.destroy');
     Route::get('stores/{store}/posts/{post}/edit', 'edit')->name('stores.posts.edit');
 });
 
@@ -64,7 +62,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
-    Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
+    Route::delete('/posts/{post}/unlike', [PostController::class, 'unlike'])->name('posts.unlike');
 });
 
 Route::get('/stadiums', [StadiumController::class, 'index'])->name('stadiums.index');
