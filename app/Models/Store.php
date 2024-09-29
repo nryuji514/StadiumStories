@@ -19,7 +19,7 @@ class Store extends Model
         'route_id',
         'google_place_id', // Google Place APIからの識別子
         'photo_url',
-         'type',
+        'type',
         ];
     
 

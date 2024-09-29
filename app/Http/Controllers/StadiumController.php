@@ -50,6 +50,7 @@ class StadiumController extends Controller
         // バリデーション: 球場名は必須、その他のフィールドは不要
         $request->validate([
             'name' => 'required|string|max:255',
+            'category' => 'required|string',
         ]);
         
         $stadiumName = $request['name'];
@@ -62,10 +63,14 @@ class StadiumController extends Controller
         if (isset($coordinates)) {
             $stadium = new Stadium();
             $stadium->name = $stadiumName;
+            $stadium->user_id = auth()->id();
             $stadium->latitude = $coordinates['lat'];
             $stadium->longitude = $coordinates['lng'];
+            $stadium->category = $request['category'];
+            
             $stadium->save();
-            return redirect()->route('stadiums.index')->with('success', '球場が作成されました');
+            
+            return redirect()->route('routes.index')->with('success', '球場が更新されました');
         }
         return redirect()->back()->withErrors('緯度と経度を取得できませんでした');
     }
@@ -89,10 +94,10 @@ class StadiumController extends Controller
 
         // リクエストから球場名を取得
         $stadiumName = $request->input('name');
-
+        
         // Google Maps Geocoding APIを使って球場名から緯度と経度を取得
         $coordinates = $this->getCoordinates($stadiumName);
-
+     
         if ($coordinates) {
             $stadium->latitude = $coordinates['lat'];
             $stadium->longitude = $coordinates['lng'];
@@ -102,7 +107,7 @@ class StadiumController extends Controller
         $stadium->name = $stadiumName;
         $stadium->save();
 
-        return redirect()->route('stadiums.index')->with('success', '球場が更新されました');
+        return redirect()->route('routes.index')->with('success', '球場が更新されました');
     }
 
     /**
@@ -111,9 +116,15 @@ class StadiumController extends Controller
     public function destroy($id)
     {
         $stadium = Stadium::findOrFail($id);
-        $stadium->delete();
 
-        return redirect()->route('stadiums.index')->with('success', '球場が削除されました');
+        // 現在のユーザーが球場の作成者であることを確認
+        if ($stadium->user_id !== auth()->id()) {
+            return redirect()->route('stadiums.index')->with('error', 'この球場を削除する権限がありません。');
+        }
+
+        $stadium->delete();
+   
+        return redirect()->route('routes.index')->with('success', '球場が削除されました');
     }
     private function getCoordinates($stadiumName) 
     { 
@@ -127,7 +138,12 @@ class StadiumController extends Controller
                     'key' => $apiKey,
                 ]
             ]); 
+            
+            // APIレスポンスをログに記録
+        \Log::info('Geocoding response:', json_decode($response->getBody(), true));
             $body = json_decode($response->getBody(), true);
+
+
             if ($body['status'] === 'OK') {   
                 $location = $body['results'][0]['geometry']['location']; 
                 return [ 
@@ -139,6 +155,7 @@ class StadiumController extends Controller
                 return null; 
             }
         } catch (\Exception $e) {
+            \Log::error('Geocoding error:', ['message' => $e->getMessage()]);
             return null;
         }
     }

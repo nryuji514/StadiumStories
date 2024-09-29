@@ -53,10 +53,10 @@
             <p><strong>ニックネーム:</strong> {{ $profile->nickname ?? 'N/A' }}</p>
         </div>
         <div class="profile-info">
-            <p class="bio"><strong>Bio:</strong> {{ $profile->bio ?? 'No bio available' }}</p>
+            <p class="bio"><strong>自己紹介:</strong> {{ $profile->bio ?? 'No bio available' }}</p>
         </div>
         <div class="edit-profile">
-            <a href="{{ route('profiles.edit', $profile->id) }}">Edit Profile</a>
+            <a href="{{ route('profiles.edit', $profile->id) }}">編集</a>
         </div>
         <div class="footer">
             <a href="{{ route('routes.index') }}">戻る</a>

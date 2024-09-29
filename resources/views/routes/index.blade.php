@@ -1,10 +1,10 @@
-<!-- resources/views/routes/index.blade.php -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <title>経路一覧</title>
     <style>
         body {
@@ -59,7 +59,7 @@
             background-color: #dc3545;
         }
         .stadium-group {
-            margin-bottom: 20px;
+            margin: 10px 0; /* 縦の余白を設定 */
             padding: 10px;
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -84,7 +84,20 @@
         .route-item a:hover {
             text-decoration: underline;
         }
+        .stadium-category {
+            margin-bottom: 20px;
+        }
+        .category-filter {
+            margin-bottom: 20px;
+        }
     </style>
+    <script>
+        function confirmDelete(event) {
+            if (!confirm('本当にこの球場を削除しますか？')) {
+                event.preventDefault(); // ユーザーがキャンセルした場合、削除を中止
+            }
+        }
+    </script>
 </head>
 <x-app-layout>
     <div class="container">
@@ -96,32 +109,122 @@
             </div>
         </div>
 
-        @foreach ($stadiums as $stadium)
-            <div class="stadium-group">
-                <div class="stadium-name">{{ $stadium->name }}</div>
-                <ul>
-                    @forelse ($stadium->routes as $route)
-                        <li class="route-item">
-                            <a href="{{ route('routes.show', $route->id) }}">
-                                {{ $route->station_name }} から {{ $route->stadium->name }} まで
-                            </a>
-                            <a href="{{ route('routes.edit', $route->id) }}" class="btn btn-sm btn-warning">編集</a>
-                            <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline;">
+        <!-- カテゴリー選択 -->
+        <div class="category-filter">
+            <form action="{{ route('routes.index') }}" method="GET">
+                <select name="category" onchange="this.form.submit()">
+                    <option value="セリーグ" {{ request('category', 'セリーグ') == 'セリーグ' ? 'selected' : '' }}>セリーグ</option>
+                    <option value="パリーグ" {{ request('category') == 'パリーグ' ? 'selected' : '' }}>パリーグ</option>
+                    <option value="地方球場" {{ request('category') == '地方球場' ? 'selected' : '' }}>地方球場</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- 選択されたカテゴリーに基づいて表示 -->
+        <div class="category-section">
+            @if(request('category', 'セリーグ') == 'セリーグ')
+                <div class="stadium-category">
+                @foreach ($centralLeagueStadiums as $stadium)
+                    <div class="stadium-group">
+                        <div class="stadium-name">{{ $stadium->name }}
+                            <form action="{{ route('stadiums.destroy', $stadium->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                                <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </form>
-                        </li>
-                    @empty
-                        <li class="route-item">この球場には経路が登録されていません。</li>
-                    @endforelse
-                </ul>
-            </div>
-        @endforeach
-    </div>
-
-    <div class="container">
-        <a href="{{ route('stadiums.index') }}" class="btn btn-primary">球場一覧を見る</a>
+                        </div>
+                        <ul>
+                            @forelse ($stadium->routes as $route)
+                                <li class="route-item">
+                                    <a href="{{ route('routes.show', $route->id) }}">
+                                        {{ $route->station_name }} から {{ $route->stadium->name }} までの経路を表示
+                                    </a>
+                                    <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            @empty
+                                <li class="route-item">この球場には経路が登録されていません。</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                @endforeach
+                </div>
+            @elseif(request('category') == 'パリーグ')
+                <div class="stadium-category">
+                @foreach ($pacificLeagueStadiums as $stadium)
+                    <div class="stadium-group">
+                        <div class="stadium-name">{{ $stadium->name }}
+                            <form action="{{ route('stadiums.destroy', $stadium->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <ul>
+                            @forelse ($stadium->routes as $route)
+                                <li class="route-item">
+                                    <a href="{{ route('routes.show', $route->id) }}">
+                                        {{ $route->station_name }} から {{ $route->stadium->name }} までの経路を表示
+                                    </a>
+                                    <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            @empty
+                                <li class="route-item">この球場には経路が登録されていません。</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                @endforeach
+                </div>
+            @elseif(request('category') == '地方球場')
+                <div class="stadium-category">
+                @foreach ($regionalStadiums as $stadium)
+                    <div class="stadium-group">
+                        <div class="stadium-name">{{ $stadium->name }}
+                            <form action="{{ route('stadiums.destroy', $stadium->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <ul>
+                            @forelse ($stadium->routes as $route)
+                                <li class="route-item">
+                                    <a href="{{ route('routes.show', $route->id) }}">
+                                        {{ $route->station_name }} から {{ $route->stadium->name }} までの経路を
+                                    </a>
+                                    <form action="{{ route('routes.destroy', $route->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" style="border: none; background: none; cursor: pointer; color: gray;">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </li>
+                            @empty
+                                <li class="route-item">この球場には経路が登録されていません。</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 </x-app-layout>
-</html>

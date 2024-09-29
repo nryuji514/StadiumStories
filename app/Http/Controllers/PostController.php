@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
@@ -17,17 +18,18 @@ class PostController extends Controller
     public function show(Store $store, Post $post )
     {
         $post->load('images', 'comments.user'); // 画像とコメントのリレーションをロード
-        return view('stores.posts.show', ['store' => $store, 'post' => $post]);
+        $data = $store;
+        return view('stores.posts.show', compact('store', 'post', 'data'));
     }
     
    public function create(Store $store)
     {
-        return view('stores.posts.create', compact('store'));
+        $data=$store;
+        return view('stores.posts.create')->with(['store'=>$store,'data'=>$data]);
     }
     
     public function store(Request $request,Store $store)
     {
-        
         // 新しい投稿を作成
         $post = new Post();
         $post->title = $request->input('title');
@@ -36,7 +38,6 @@ class PostController extends Controller
         $post->user_id = auth()->id();
     
         $post->save();
-    
         // 投稿と同時に画像を保存できるようにする
         if ($request->hasFile('post_image')) {
             foreach ($request->file('post_image') as $file) {
@@ -50,7 +51,8 @@ class PostController extends Controller
     
     public function edit(Post $post)
     {
-        return view('posts.edit')->with(['post' => $post]);
+        $data = $store;
+        return view('posts.edit')->with(['post' => $post,'store' => $data]);
     }
     
     public function update(PostRequest $request, Post $post)
@@ -85,22 +87,35 @@ class PostController extends Controller
     
     public function like(Post $post)
     {
-        $like = Like::firstOrCreate(
-            ['user_id' => auth()->id(), 'post_id' => $post->id]
-        );
+        // ユーザーがすでにLikeしていない場合にLikeを追加
+        if (!$post->likes()->where('user_id', Auth::id())->exists()) {
+            $post->likes()->create(['user_id' => Auth::id()]);
+        }
 
-        return back();
+        // 最新のLike数を返す
+        return response()->json([
+            'success' => true,
+            'likes_count' => $post->likes()->count()
+        ]);
     }
 
     public function unlike(Post $post)
     {
-        $like = Like::where('user_id', auth()->id())
-                    ->where('post_id', $post->id)
-                    ->first();
+        // ユーザーがLikeしている場合にLikeを削除
+        $post->likes()->where('user_id', Auth::id())->delete();
 
-        if ($like) {
-            $like->delete();
-        }
-        return back();
+        // 最新のLike数を返す
+        return response()->json([
+            'success' => true,
+            'likes_count' => $post->likes()->count()
+        ]);
     }
+    public function destroy(Store $store,Post $post)
+    {
+        // 投稿を削除
+        $post->delete();
+        // 削除後のリダイレクト処理
+        return redirect()->route('stores.posts.index', ['store' => $store->id])->with('success', '投稿が削除されました');
+    }
+
 }

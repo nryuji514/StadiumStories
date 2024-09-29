@@ -15,9 +15,13 @@ class RouteController extends Controller
      */
     public function index()
     {
+        $centralLeagueStadiums = Stadium::where('category', 'セリーグ')->with('routes')->get();
+        $pacificLeagueStadiums = Stadium::where('category', 'パリーグ')->with('routes')->get();
+        $regionalStadiums = Stadium::where('category', '地方')->with('routes')->get();
         $stadiums = Stadium::with('routes')->get();
         $routes = Route::where('user_id', auth()->id())->with('stadium')->get();
-        return view('routes.index', compact('routes','stadiums'));
+        return view('routes.index', compact('routes','stadiums','centralLeagueStadiums',
+                                            'pacificLeagueStadiums','regionalStadiums'));
     }
 
     /**
@@ -35,6 +39,7 @@ class RouteController extends Controller
         
         return view('routes.show', compact('route'));
     }
+
 
     /**
      * ルートの作成フォームを表示

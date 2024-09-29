@@ -18,7 +18,7 @@ class CommentController extends Controller
     $request->validate([
         'comment' => 'required|max:1000',
     ]);
-    
+    $data = $store;
     $comment = new Comment();
     $comment->comment = $request->input('comment');
     $comment->post_id = $post->id;
@@ -26,7 +26,7 @@ class CommentController extends Controller
     $comment->user_id = auth()->user()->id; // 現在のログインユーザーのIDを設定
     $comment->save();
 
-    return redirect()->route('stores.posts.show', ['store' => $store->id, 'post' => $post->id]);
+    return redirect()->route('stores.posts.show', ['store' => $data->id, 'post' => $post->id]);
     }
     public function destroy(Comment $comment)
     {

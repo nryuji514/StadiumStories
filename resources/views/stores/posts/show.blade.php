@@ -2,10 +2,15 @@
 <html lang="{{ str_replace('_','-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>{{ $post->title }} - Blog</title>
-    <!-- Fonts -->
+    
+    <!-- Font AwesomeのCDN追加 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- 他のスタイルやメタタグ -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
-    <!-- Styles -->
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -20,9 +25,20 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* 子要素の絶対位置を設定するための相対位置 */
+        }
+        .back-button {
+            position: absolute; /* 画面の左上に配置 */
+            top: 10px;
+            left: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px; /* アイコンのサイズ */
+            color: #007bff; /* 色の調整 */
         }
         .title {
-            margin: 0;
+            margin: 10px 0;
             font-size: 2em;
             color: #333;
             border-bottom: 2px solid #ddd;
@@ -30,17 +46,6 @@
         }
         .content {
             margin: 20px 0;
-        }
-        .content__post h3 {
-            margin-top: 0;
-            color: #444;
-        }
-        .category-link {
-            color: #007bff;
-            text-decoration: none;
-        }
-        .category-link:hover {
-            text-decoration: underline;
         }
         .body {
             margin-top: 10px;
@@ -57,23 +62,45 @@
             margin-bottom: 10px;
             border-radius: 8px;
         }
-        .edit a {
+        .btn {
             display: inline-block;
-            background: #007bff;
-            color: white;
             padding: 10px 15px;
-            text-decoration: none;
             border-radius: 5px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
             transition: background 0.3s ease;
         }
-        .edit a:hover {
+        .btn:hover {
             background: #0056b3;
         }
-        .comments {
-            margin-top: 30px;
+        .likes {
+            display: flex;
+            justify-content: center; /* 中央に配置 */
+            margin-top: 20px; /* 上部に余白を追加 */
         }
-        .comments h2 {
-            margin-top: 0;
+        .like-button {
+            background-color: #ff5252; /* 背景色を目立たせる */
+            color: white;
+            font-size: 24px; /* 大きさを変更 */
+            padding: 10px 20px; /* 内側の余白を追加 */
+            border-radius: 50px; /* 丸みを持たせる */
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease; /* 背景色の変化にアニメーションを追加 */
+            display: flex;
+            align-items: center;
+            margin: 0 10px; /* ボタンの間隔を調整 */
+        }
+        .like-button.liked {
+            background-color: red; /* いいねされた時の背景色 */
+        }
+        .heart {
+            margin-right: 10px; /* ハートとテキストの間にスペースを追加 */
+        }
+        .comments {
+            font-size: 20px;
+            margin-top: 30px;
         }
         .comment {
             background: #f9f9f9;
@@ -107,6 +134,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s ease;
+            width: 100%; /* フル幅にする */
         }
         input[type="submit"]:hover {
             background: #0056b3;
@@ -122,14 +150,32 @@
         .footer a:hover {
             text-decoration: underline;
         }
+        /* ナビゲーションスタイル */
+        nav {
+            margin-bottom: 20px; /* ナビゲーションの下にマージンを追加 */
+        }
+
+        nav a {
+            font-size: 18px; /* ナビゲーションリンクのフォントサイズ */
+            color: #007bff; /* ナビゲーションリンクの色 */
+            text-decoration: none; /* 下線を消す */
+            margin-right: 20px; /* リンクの間隔 */
+        }
+
+        nav a:hover {
+            text-decoration: underline; /* ホバー時に下線を追加 */
+        }
     </style>
 </head>
-<body>
+<x-app-layout>
     <div class="container">
+        <nav>
+            <a href="{{ route('stores.posts.index', ['store' => $data->id]) }}">＜ 戻る</a>
+         </nav>
+        
         <h1 class="title">{{ $post->title }}</h1>
         <div class="content">
             <div class="content__post">
-                <h3>本文</h3>
                 <p class="body">{{ $post->body }}</p>
                 <div class="images">
                     @foreach($post->images as $image)
@@ -139,28 +185,17 @@
             </div>
         </div>
         <div class="likes">
-            <form action="{{ route('posts.like', $post) }}" method="POST">
-                @csrf
-                <button type="submit">{{ $post->likes->count() }} Likes</button>
-            </form>
-
-            @if($post->likes()->where('user_id', auth()->id())->exists())
-                <form action="{{ route('posts.unlike', $post) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                <button type="submit">Unlike</button>
-                </form>
-            @endif
+            <button type="button" class="like-button {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}" data-post-id="{{ $post->id }}">
+                <span class="heart {{ $post->likes()->where('user_id', auth()->id())->exists() ? 'liked' : '' }}">♡</span>
+                <span class="like-count">{{ $post->likes->count() }}</span> 
+            </button>
         </div>
 
-        <!--<div class="edit">-->
-        <!--    <a href="/posts/{{ $post->id }}/edit">Edit</a>-->
-        <!--</div>-->
         <!-- コメントの表示 -->
         <div class="comments">
-            <h2>Comments</h2>
+            <h2>コメント</h2>
             @if($post->comments->isEmpty())
-                <p>No comments yet.</p>
+                <p>まだコメントはありません・・</p>
             @else
                 @foreach($post->comments as $comment)
                     <div class="comment">
@@ -171,7 +206,9 @@
                             <form action="{{ route('comments.destroy', $comment) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="background: red; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Delete</button>
+                                <button type="submit" style="background: transparent; color: red; border: none; padding: 5px 10px; cursor: pointer;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </form>
                         @endcan
                     </div>
@@ -186,7 +223,38 @@
                 <input type="submit" value="コメントを投稿">
             </form>
         @endauth
-        <a href="{{ route('stores.posts.index', ['store' => $data->id]) }}">投稿一覧へ</a>
+        
     </div>
-</body>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.like-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.dataset.postId;
+            const isLiked = this.classList.contains('liked');
+            const url = isLiked
+                ? `/posts/${postId}/unlike`
+                : `/posts/${postId}/like`;
+
+            const method = isLiked ? 'DELETE' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      const likeCount = this.querySelector('.like-count');
+                      likeCount.textContent = data.likes_count;
+                      this.classList.toggle('liked');
+                  }
+              })
+              .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+</x-app-layout>
 </html>
