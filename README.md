@@ -14,7 +14,7 @@ Tailwind:5.x.x
 [![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku)](https://skillicons.dev)
 
 ## URL・テストユーザー
-URL:localhost:3000
+URL:https://stadiumstories-8d9ef140c985.herokuapp.com
 テストユーザー
 - name:testname
 - email:test@test.com
