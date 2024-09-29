@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('station_id')->constrained('stations')->onDelete('cascade');
+            $table->string('station_name');
             $table->foreignId('stadium_id')->constrained('stadiums')->onDelete('cascade');
-            $table->text('route_data'); // Google Maps APIからの経路データを保存
+            $table->string('latitude');
+            $table->string('longitude');
             $table->timestamps();
         });
     }

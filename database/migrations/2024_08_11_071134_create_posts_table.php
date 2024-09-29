@@ -14,15 +14,13 @@ return new class extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->bigIncrements('id');
             
-            $table->bigInteger('user_id')->unsigned()->index();
-            $table->bigInteger('category_id')->unsigned()->index()
-            ;$table->string('image_path')->nullable(); // 画像のパスを保存するカラム
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('image_path')->nullable(); // 画像のパスを保存するカラム
             
             $table->string('title', 50)->nullable();
             $table->string('body', 200)->nullable();
             
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            
             $table->timestamps();
             $table->softDeletes();
         });

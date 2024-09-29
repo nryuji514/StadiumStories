@@ -73,6 +73,7 @@ Route::get('/stadiums/{stadium}/edit', [StadiumController::class, 'edit'])->name
 Route::put('/stadiums/{stadium}', [StadiumController::class, 'update'])->name('stadiums.update');
 Route::delete('/stadiums/{stadium}', [StadiumController::class, 'destroy'])->name('stadiums.destroy');
 
+Route::middleware('auth')->group(function () {
 Route::get('/routes', [RouteController::class, 'index'])->name('routes.index');
 Route::get('/routes/create', [RouteController::class, 'create'])->name('routes.create');
 Route::post('/routes', [RouteController::class, 'store'])->name('routes.store');
@@ -80,5 +81,5 @@ Route::get('/routes/{route}', [RouteController::class, 'show'])->name('routes.sh
 Route::get('/routes/{route}/edit', [RouteController::class, 'edit'])->name('routes.edit');
 Route::put('/routes/{route}', [RouteController::class, 'update'])->name('routes.update');
 Route::delete('/routes/{route}', [RouteController::class, 'destroy'])->name('routes.destroy');
-
+});
 require __DIR__.'/auth.php';

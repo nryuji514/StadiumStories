@@ -45,12 +45,14 @@ class StoreController extends Controller
     $response = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
         'location' => "$latitude,$longitude",
         'radius' => 500, // 500メートル以内
-        'type' => 'supermarket', // 検索タイプにスーパーも追加
+        'type' => 'restaurant', // 検索タイプにスーパーも追加
         'language' => $language,
         'key' => env('GOOGLE_MAPS_API_KEY'),
     ]);
+   
 
     $results = $response->json()['results'];
+     
     // 店舗データの保存
     foreach ($results as $storeData) {
         $photoUrl = null;
