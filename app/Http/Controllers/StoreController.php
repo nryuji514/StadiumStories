@@ -36,50 +36,50 @@ class StoreController extends Controller
 
 
     public function searchAndSave(Route $route)
-{
-    $latitude = $route->latitude;
-    $longitude = $route->longitude;
-    $language = 'ja'; // 日本語
-
-    // APIリクエストの送信
-    $response = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
-        'location' => "$latitude,$longitude",
-        'radius' => 500, // 500メートル以内
-        'type' => 'restaurant', // 検索タイプにスーパーも追加
-        'language' => $language,
-        'key' => env('GOOGLE_MAPS_API_KEY'),
-    ]);
-   
-
-    $results = $response->json()['results'];
-     
-    // 店舗データの保存
-    foreach ($results as $storeData) {
-        $photoUrl = null;
-
-        // 写真情報が存在する場合、URLを取得
-        if (isset($storeData['photos'])) {
-            $photoReference = $storeData['photos'][0]['photo_reference'];
-            $photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={$photoReference}&key=" . env('GOOGLE_MAPS_API_KEY');
-        }
-
-        // 店舗の種類を保存するために初期化
-        $types = $storeData['types'];
-        $storeType = null;
+    {
+        $latitude = $route->latitude;
+        $longitude = $route->longitude;
+        $language = 'ja'; // 日本語
         
-        // 店舗の種類を設定
-        if (in_array('convenience_store', $types)) {
-            $storeType = 'convenience_store';
-        } elseif (in_array('restaurant', $types)) {
-            $storeType = 'restaurant';
-        } elseif (in_array('supermarket', $types)) {
-            $storeType = 'supermarket';
-        }
+        // 3つの種類の場所をそれぞれ取得
+        $this->fetchAndSaveStores($latitude, $longitude, 'restaurant', $route);
+        $this->fetchAndSaveStores($latitude, $longitude, 'convenience_store', $route);
+        $this->fetchAndSaveStores($latitude, $longitude, 'supermarket', $route);
 
-        // 店舗の種類が設定されていれば保存
-        if ($storeType) {
+        return redirect()->route('routes.show', $route->id)->with('success', '店舗情報が更新されました');
+    }
+
+    // 店舗データを取得して保存する共通メソッド
+    private function fetchAndSaveStores($latitude, $longitude, $type, $route)
+    {
+        // APIリクエストの送信
+        $response = Http::get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', [
+            'location' => "$latitude,$longitude",
+            'radius' => 500, // 半径500メートル以内
+            'type' => $type, // 場所の種類を指定
+            'language' => 'ja', // 日本語
+            'key' => env('GOOGLE_MAPS_API_KEY'),
+        ]);
+
+        $results = $response->json()['results'];
+
+        // 店舗データの保存
+        foreach ($results as $storeData) {
+            $photoUrl = null;
+
+            // 写真情報が存在する場合、URLを取得
+            if (isset($storeData['photos'])) {
+                $photoReference = $storeData['photos'][0]['photo_reference'];
+                $photoUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference={$photoReference}&key=" . env('GOOGLE_MAPS_API_KEY');
+            }
+
+            // 店舗の種類を保存する
             Store::updateOrCreate(
-                ['name' => $storeData['name'], 'route_id' => $route->id, 'type' => $storeType], // 重複を防ぐための条件
+                [
+                    'name' => $storeData['name'],
+                    'route_id' => $route->id,
+                    'type' => $type // レストラン、コンビニ、スーパーのいずれか
+                ],
                 [
                     'address' => $storeData['vicinity'],
                     'latitude' => $storeData['geometry']['location']['lat'],
@@ -89,7 +89,5 @@ class StoreController extends Controller
             );
         }
     }
-    return redirect()->route('routes.show', $route->id)->with('success', '店舗情報が更新されました');
-}
 
 }
