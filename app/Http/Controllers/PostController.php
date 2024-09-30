@@ -30,6 +30,12 @@ class PostController extends Controller
     
     public function store(Request $request,Store $store)
     {
+        // バリデーションを追加
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'body' => 'required|string',
+            'post_image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // 各画像のバリデーション
+        ]);
         // 新しい投稿を作成
         $post = new Post();
         $post->title = $request->input('title');
