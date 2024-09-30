@@ -167,7 +167,7 @@
                 </div>
             </div>
 
-            <!-- コンビニの表示 
+            <!-- コンビニの表示 -->
             <h3>コンビニ</h3>
             <div class="store-list">
                 <div class="store-container">
@@ -199,7 +199,7 @@
                         </div>
                     @endforeach
                 </div>
-            </div>-->
+            </div>
         @endif
     </div>
     <!-- コンテナ終了 -->
