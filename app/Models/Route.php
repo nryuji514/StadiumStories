@@ -13,7 +13,6 @@ class Route extends Model
         'user_id',
         'station_name',
         'stadium_id',
-        'route_data',
         'latitude',
         'longitude',
         
