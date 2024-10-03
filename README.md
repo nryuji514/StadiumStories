@@ -18,8 +18,7 @@ URL:https://stadiumstories-8d9ef140c985.herokuapp.com
 テストユーザー
 - name:testname
 - email:test@test.com
-- password:testtest
-
+  
 ## 機能
 - 投稿周りのCRUD
 - いいね機能
