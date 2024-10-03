@@ -5,22 +5,22 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ route('routes.index') }}">
+                        
                     </a>
                     
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('routes.index')" :active="request()->routeIs('routes.index')">
-                        {{ __('Home') }}
+                    <x-nav-link :href="route('routes.index')" :active="request()->routeIs('routes.index')" class="text-sm sm:text-base md:text-lg">
+                        {{ __('HOME') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('stadiums.create')" :active="request()->routeIs('stadiums.create')">
-                        {{ __('Stadium') }}
+                    <x-nav-link :href="route('stadiums.create')" :active="request()->routeIs('stadiums.create')" class="text-sm sm:text-base md:text-lg">
+                        {{ __('studium-add') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('routes.create')" :active="request()->routeIs('routes.create')">
-                        {{ __('Route') }}
+                    <x-nav-link :href="route('routes.create')" :active="request()->routeIs('routes.create')" class="text-sm sm:text-base md:text-lg">
+                        {{ __('route-add') }}
                     </x-nav-link>
                 </div>
             </div>
