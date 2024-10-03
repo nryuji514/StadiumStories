@@ -16,6 +16,7 @@ class Post extends Model
         'body',
         'user_id',
         'store_id'
+        
         ];
 
     // カスタムメソッド: ページネーション
