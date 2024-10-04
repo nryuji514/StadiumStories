@@ -16,7 +16,7 @@ Tailwind:5.x.x
 ## URL・テストユーザー
 URL:https://stadiumstories-8d9ef140c985.herokuapp.com
 テストユーザー
-- name:testname
+- name:test
 - email:test@test.com
   
 ## 機能
