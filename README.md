@@ -10,9 +10,8 @@ StadiumStories
 PHP:8.2.21 
 Laravel:10.48.20
 Tailwind:3.4.9
-DB:Mysql
 デプロイ：Heroku
-環境：Amazon AWS
+インフラ：Amazon AWS
 [![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku)](https://skillicons.dev)
 
 ## URL・テストユーザー
