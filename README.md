@@ -9,10 +9,16 @@ StadiumStories
 ## 使用技術
 PHP:8.2.21 
 Laravel:10.48.20
-Tailwind:3.4.9
+Tailwind:3.1.0
+Mysql:10.5.25-MariaDB  
+
+Javascript
+HTML
+CSS  
+
 デプロイ：Heroku
 インフラ：Amazon AWS
-[![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku)](https://skillicons.dev)
+[![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku,Amazon AWS,Javascript,HTML,CSS)](https://skillicons.dev)
 
 ## URL・テストユーザー
 URL:https://stadiumstories-8d9ef140c985.herokuapp.com
