@@ -22,7 +22,7 @@ CSS
 [![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku,Amazon AWS,Javascript,HTML,CSS)](https://skillicons.dev)
 
 ## URL・テストユーザー
-URL:https://stadiumstories-8d9ef140c985.herokuapp.com
+URL:https://stadiumstories-8d9ef140c985.herokuapp.com  
 テストユーザー
 - name:testname
 - email:test@test.com
@@ -32,26 +32,26 @@ URL:https://stadiumstories-8d9ef140c985.herokuapp.com
 - いいね機能
 - コメント機能
 - 画像投稿
+- Map機能
+- 二地点間の経路表示
+- 経路から半径500メートル内の店舗表示
+- ログイン機能
+- プロフィール機能
 ↑アピールしたいものは画像を貼ってもok
 
-## 工夫点・苦労した点
-- 〜〜〜〜
-- 〜〜〜〜
-- 〜〜〜〜
-- 〜〜〜〜
+## 工夫点
+- 球場から最寄りの駅の二地点間の経路表示・保存をGoogleMapAPIを使用し、可能にしたところ
+- 経路から半径500メートル内の飲食店、コンビニエンスストア、スーパーマーケットを分けて自動取得できるところ
+- 自動取得した店舗に対し、野球ファン目線のお店選びや投稿を可能にした
+
+## 苦労した点
+- ルートに表示されている店舗ごとに対する投稿を可能にするためのリレーション
+- 二地点間のルートを決めるためのデータベース設計
 
 ## 今後の展望
 - 今後つけたい機能・やりたいこと
-- 例）ChatGPT導入
-- 例）テストを導入して安全な開発を行いたい
+- 球場のフードを投稿するためのもう一つの投稿機能
+- ユーザーの好みに合った店舗表示
 
 ## ER図・ワイヤーフレームなど
-URL or スクショ（こっちの方がよい）
-
-リアクションする
-
-返信
-
-New
-14:05
-マークダウン or readmeの書き方を調べる
+![スクリーンショット 2024-09-30 154235](https://github.com/user-attachments/assets/41aa6916-e85c-4a5b-b4bc-0783827fdbf5)
