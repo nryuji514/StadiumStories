@@ -18,7 +18,7 @@ HTML
 CSS  
 
 デプロイ：Heroku
-インフラ：Amazon AWS
+インフラ：Amazon AWS  
 [![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku,Amazon AWS,Javascript,HTML,CSS)](https://skillicons.dev)
 
 ## URL・テストユーザー
