@@ -19,7 +19,7 @@ CSS
 
 デプロイ：Heroku
 インフラ：Amazon AWS  
-[![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku,AWS,javascript,html,css)](https://skillicons.dev)
+[![使用技術アイコン](https://skillicons.dev/icons?i=php,laravel,tailwind,heroku,aws,javascript,html,css)](https://skillicons.dev)
 
 ## URL・テストユーザー
 URL:https://stadiumstories-8d9ef140c985.herokuapp.com  
